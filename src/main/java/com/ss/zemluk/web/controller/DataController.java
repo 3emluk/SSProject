@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.annotation.PostConstruct;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -38,11 +39,10 @@ public class DataController {
     }
 
     /**
-     * Initializing view data
+     * Initializing view data for testing
      */
     @PostConstruct
     private void iniDataForTesting() {
-        dataList = fileDataService.getAll();
     }
 
     /**
@@ -165,6 +165,9 @@ public class DataController {
         log.info("Executing /data/add");
         AjaxResponseBody result = new AjaxResponseBody();
         if (!StringUtils.isEmpty(requestData.getStringValue())) {
+            if(dataList==null){
+                dataList= new ArrayList<>();
+            }
             dataList.add(fileDataService.create(new Data(requestData.getStringValue())));
             result.setCode("200");
             result.setMsg("Value added");

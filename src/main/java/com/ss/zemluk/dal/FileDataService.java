@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -27,6 +28,7 @@ public class FileDataService implements DataService {
     @Override
     public Data create(Data data) {
         ObjectMapper mapper = new ObjectMapper()
+                .configure(DeserializationFeature.ACCEPT_SINGLE_VALUE_AS_ARRAY, true)
                 .configure(DeserializationFeature.ACCEPT_SINGLE_VALUE_AS_ARRAY, true)
                 .configure(SerializationFeature.FLUSH_AFTER_WRITE_VALUE, true);
         List<Data> dataList = null;
@@ -61,6 +63,11 @@ public class FileDataService implements DataService {
         ObjectMapper mapper = new ObjectMapper().configure(DeserializationFeature.ACCEPT_SINGLE_VALUE_AS_ARRAY, true);
         List<Data> dataList = null;
         try {
+            File file = new File(STORE_PATH);
+            if (!file.exists()) {
+                file.createNewFile();
+                mapper.writeValue(new File(STORE_PATH), new ArrayList<Data>());
+            }
             dataList = mapper.readValue(new File(STORE_PATH), new TypeReference<List<Data>>() {
             });
             log.info("Data received");
